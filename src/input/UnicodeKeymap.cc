@@ -5,7 +5,6 @@
 #include "FileException.hh"
 #include "ParseUtils.hh"
 #include "narrow.hh"
-#include "one_of.hh"
 #include "ranges.hh"
 #include "stl.hh"
 #include <optional>
@@ -63,12 +62,6 @@ UnicodeKeymap::UnicodeKeymap(string_view keyboardType)
 		auto buf = file.mmap();
 		parseUnicodeKeyMapFile(
 			string_view(reinterpret_cast<const char*>(buf.data()), buf.size()));
-		// TODO in the future we'll require the presence of
-		//      "MSX-Video-Characterset" in the keyboard information
-		//      file, then we don't need this fallback.
-		if (!msxChars.has_value()) {
-			msxChars.emplace("MSXVID.TXT");
-		}
 	} catch (FileException&) {
 		throw MSXException("Couldn't load unicode keymap file: ", filename);
 	}
@@ -97,14 +90,7 @@ void UnicodeKeymap::parseUnicodeKeyMapFile(string_view file)
 		auto token1 = getToken(line, ',');
 		if (token1.empty()) continue; // empty line (or only whitespace / comments)
 
-		if (token1 == "MSX-Video-Characterset:") {
-			auto vidFileName = getToken(line);
-			if (vidFileName.empty()) {
-				throw MSXException("Missing filename for MSX-Video-Characterset");
-			}
-			msxChars.emplace(vidFileName);
-
-		} else if (token1.starts_with("DEADKEY")) {
+		if (token1.starts_with("DEADKEY")) {
 			// DEADKEY<n> ...
 			auto n = token1.substr(strlen("DEADKEY"));
 			unsigned deadKeyIndex = [&] {
