@@ -34,6 +34,9 @@ private:
 
 private:
 	struct MsxKeyName {
+		// constructor provided as workaround for bug in clang-15
+		MsxKeyName(std::string name_, KeyMatrixPosition key_)
+			: name(name_), key(key_) {}
 		std::string name;
 		KeyMatrixPosition key; // msx keyboard matrix position
 	};
