@@ -26,10 +26,10 @@ public:
 
 private:
     std::shared_ptr<File> file;
-    std::array<int32_t, 164> trackOffsets;
+    std::array<uint32_t, 164> trackOffsets;
     int cachedTrackNo;
 
-    int32_t diskSize;
+    uint32_t diskSize;
 	bool singleSided;
 	bool writeProtected;
     uint16_t sectorsPerTrack;

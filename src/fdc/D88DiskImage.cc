@@ -27,7 +27,7 @@ struct D88Header
   std::array<uint8_t, 9> reserved;
   uint8_t writeProtected;
   uint8_t diskType;
-  int32_t diskSize;
+  Endian::L32 diskSize;
 };
 
 struct D88SectorHeader
@@ -36,15 +36,15 @@ struct D88SectorHeader
 	uint8_t h;
 	uint8_t r;
 	uint8_t n;
-	uint16_t sectorsPerTrack;
+	Endian::L16 sectorsPerTrack;
 	uint8_t densityType;
 	uint8_t deleteFlag;
 	uint8_t status;
 	std::array<uint8_t, 5> reserved;
-	uint16_t sectorDataSize;
+	Endian::L16 sectorDataSize;
 };
 
-[[nodiscard]] static /*constexpr*/ bool isValidD88Header(const D88Header& header, const std::array<int32_t, 164>& trackOffsets)
+[[nodiscard]] static /*constexpr*/ bool isValidD88Header(const D88Header& header, const std::array<uint32_t, 164>& trackOffsets)
 {
 	if (header.writeProtected != one_of(0x00, 0x10)) {
 		return false;
